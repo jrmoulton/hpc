@@ -80,6 +80,9 @@ fn addExecutable(
     exe.addIncludePath(gtest_dep.path("googletest"));
     exe.addIncludePath(gtest_dep.path("googletest/include"));
 
+    const expected_dep = b.dependency("tl_expected", .{});
+    exe.addIncludePath(expected_dep.path("include"));
+
     exe.linkLibCpp();
     exe.linkLibC();
 
