@@ -1,0 +1,10 @@
+*.DS_Store
+*.~undo-tree~
+.cache/
+.zig-cache/
+zig-out/
+target/
+compile_commands.json
+submission*/
+temp*
+*.gz
