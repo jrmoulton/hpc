@@ -4,7 +4,7 @@
 BIN_COUNT=100
 MIN_VALUE=0.0
 MAX_VALUE=100.0
-DATA_COUNT=10000000  # 10 million points for better scaling
+DATA_COUNT=100000  # 10 million points for better scaling
 
 # Output file for the results
 OUTPUT_FILE="benchmark_results.txt"
@@ -22,7 +22,8 @@ do
               --runs 20 \
               --export-json "thread_${threads}.json" \
               --command-name "$threads threads" \
-              "./target/parallel $threads $BIN_COUNT $MIN_VALUE $MAX_VALUE $DATA_COUNT"
+              "./target/hw3 $threads $DATA_COUNT"
+              # "./target/parallel $threads $BIN_COUNT $MIN_VALUE $MAX_VALUE $DATA_COUNT"
     
     # Extract the mean time and append to results file
     mean_time=$(cat "thread_${threads}.json" | jq '.results[0].mean')

@@ -69,22 +69,26 @@ fn addExecutable(
         .target = b.host,
     });
 
-    const gtest_dep = b.dependency("gtest", .{});
-    exe.addCSourceFiles(.{
-        .root = gtest_dep.path("googletest/src"),
-        .files = &.{
-            "gtest-all.cc",
-        },
-    });
+    // const gtest_dep = b.dependency("gtest", .{});
+    // exe.addCSourceFiles(.{
+    //     .root = gtest_dep.path("googletest/src"),
+    //     .files = &.{
+    //         "gtest-all.cc",
+    //     },
+    // });
 
-    exe.addIncludePath(gtest_dep.path("googletest"));
-    exe.addIncludePath(gtest_dep.path("googletest/include"));
+    // exe.addIncludePath(gtest_dep.path("googletest"));
+    // exe.addIncludePath(gtest_dep.path("googletest/include"));
 
     const expected_dep = b.dependency("tl_expected", .{});
     exe.addIncludePath(expected_dep.path("include"));
 
-    exe.linkLibCpp();
-    exe.linkLibC();
+    exe.linkSystemLibrary("c");
+    exe.linkSystemLibrary("c++");
+    exe.addLibraryPath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/libomp/lib", .owner = b } });
+    exe.addIncludePath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/libomp/include", .owner = b } });
+
+    exe.linkSystemLibrary("omp");
 
     const flags = .{
         "-Wall",
@@ -95,6 +99,7 @@ fn addExecutable(
         // "-fsanitize=undefined",
         "-Werror",
         "-std=c++11",
+        "-fopenmp",
     };
 
     exe.addCSourceFile(.{
@@ -110,17 +115,9 @@ fn addExecutable(
     exe.addIncludePath(.{ .src_path = .{ .owner = b, .sub_path = "include/" } });
 
     targets.append(exe) catch @panic("OOM");
-    const run_artifact = b.addRunArtifact(exe);
-    run_artifact.setEnvironmentVariable("GTEST_COLOR", "yes");
 
     const install_artifact = b.addInstallArtifact(exe, .{ .dest_dir = .{ .override = .{ .custom = "../target" } } });
     install_all.dependOn(&install_artifact.step);
-
-    var run_step_name_buffer: [64]u8 = undefined;
-    const run_step_name = std.fmt.bufPrint(&run_step_name_buffer, "run-{s}", .{name}) catch @panic("OOM");
-    var run_step_description_buffer: [64]u8 = undefined;
-    const run_description = std.fmt.bufPrint(&run_step_description_buffer, "Build and run the {s} program", .{run_step_name}) catch @panic("OOM");
-    const run_step = b.step(run_step_name, run_description);
 
     var build_step_name_buffer: [64]u8 = undefined;
     const build_step_name = std.fmt.bufPrint(&build_step_name_buffer, "{s}", .{name}) catch @panic("OOM");
@@ -129,6 +126,4 @@ fn addExecutable(
     const build_step = b.step(build_step_name, build_description);
 
     build_step.dependOn(&install_artifact.step);
-    run_step.dependOn(build_step);
-    run_step.dependOn(&run_artifact.step);
 }
