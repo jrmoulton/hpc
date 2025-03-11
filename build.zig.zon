@@ -1,16 +1,4 @@
-// .{
-//     .name = "your-project",
-//     .version = "0.0.1",
-
-//     .dependencies = .{
-//         .compile_commands = .{
-//             .url = "https://github.com/the-argus/zig-compile-commands/archive/090f6ca767de238f7eae4e13f91ecc7a299153c4.tar.gz",
-//             .hash = "1220ad678342c3191edebd10df1a883b7a71e245d4ee91da26b7cf6b30e4ee8fb78d",
-//         },
-//     }
-// }
-
-.{ .name = "test-dome-practice", .version = "0.0.1", .paths = .{""}, .dependencies = .{ .gtest = .{
+.{ .name = .hpc_hw, .fingerprint = 0x8181f80bfbf4ed06, .version = "0.0.1", .paths = .{""}, .dependencies = .{ .gtest = .{
     .url = "https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz",
     .hash = "1220f76996fe071a0380b8b9d10b5ebade8dbc6a53d6ab281b3c97e7e20fd75e3b79",
 }, .tl_expected = .{

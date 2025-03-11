@@ -66,7 +66,7 @@ fn addExecutable(
     const exe = b.addExecutable(.{
         .name = name,
         .optimize = mode,
-        .target = b.host,
+        .target = b.graph.host,
     });
 
     // const gtest_dep = b.dependency("gtest", .{});
@@ -85,10 +85,18 @@ fn addExecutable(
 
     exe.linkSystemLibrary("c");
     exe.linkSystemLibrary("c++");
-    exe.addLibraryPath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/libomp/lib", .owner = b } });
-    exe.addIncludePath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/libomp/include", .owner = b } });
 
-    exe.linkSystemLibrary("omp");
+    if (std.mem.eql(u8, name, "hw3")) {
+        exe.addLibraryPath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/libomp/lib", .owner = b } });
+        exe.addIncludePath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/libomp/include", .owner = b } });
+        exe.linkSystemLibrary("omp");
+    }
+
+    if (std.mem.eql(u8, name, "hw4")) {
+        exe.addLibraryPath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/open-mpi/lib", .owner = b } });
+        exe.addIncludePath(.{ .src_path = .{ .sub_path = "/opt/homebrew/opt/open-mpi/include", .owner = b } });
+        exe.linkSystemLibrary("mpi");
+    }
 
     const flags = .{
         "-Wall",

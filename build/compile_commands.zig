@@ -166,6 +166,7 @@ fn getCSources(b: *std.Build, steps: []const *std.Build.Step.Compile) []*CSource
                         } },
                         .files = files_mem,
                         .flags = flags.toOwnedSlice() catch @panic("OOM"),
+                        .language = .c,
                     };
 
                     res.append(source_file) catch @panic("OOM");
@@ -187,11 +188,11 @@ fn getCSources(b: *std.Build, steps: []const *std.Build.Step.Compile) []*CSource
     return res.toOwnedSlice() catch @panic("OOM");
 }
 
-fn makeCdb(step: *std.Build.Step, prog_node: std.Progress.Node) anyerror!void {
+fn makeCdb(step: *std.Build.Step, make_options: std.Build.Step.MakeOptions) anyerror!void {
     if (compile_steps == null) {
         @panic("No compile steps registered. Programmer error in createStep");
     }
-    _ = prog_node;
+    _ = make_options;
     const allocator = step.owner.allocator;
 
     var compile_commands = std.ArrayList(CompileCommandEntry).init(allocator);
